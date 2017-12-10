@@ -43,7 +43,7 @@ do
         #initialize output file
         echo '#ms file' > $OUTDIR\POD$i\_allmarkers.ms
         #simulate sequences with scrm: creates as many files as number of markers
-        Rscript --vanilla /data/user/scripts/ABC_POD_simulation.r $MOD $NIND $LOCNUM $LOCLENGTH $OUTDIR $i
+        Rscript --vanilla /data/user/scripts/POD_simulation.r $MOD $NIND $LOCNUM $LOCLENGTH $OUTDIR $i
         
         for j in `seq 1 $LOCNUM`
         do
