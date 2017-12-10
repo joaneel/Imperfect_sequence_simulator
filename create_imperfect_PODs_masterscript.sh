@@ -52,8 +52,8 @@ do
                 sed -i -e '/^segsites: 0/r nosite_template.txt' $OUTDIR\scrm$i\.out_$j
                 sed -i s/'segsites: 0'/'segsites: 1'/g $OUTDIR\scrm$i\.out_$j
 
-                #Python script 1 to transform ms file created by scrm into a fasta file
-                ########################################################################
+                #Python script to transform ms file created by scrm into a fasta file: modified from https://github.com/svohr/ms_utils
+                ######################################################################################################################
                 /data/user/programs/ms2fasta $OUTDIR\scrm$i\.out_$j > $OUTDIR\ms2fasta$i\_$j.out
                 #rm $OUTDIR\scrm.out_$i
 
@@ -70,6 +70,7 @@ do
                 sed -i s/t/T/g $OUTDIR\POD$i\_all_$j.fasta
                 sed -i s/n/N/g $OUTDIR\POD$i\_all_$j.fasta
 
+                #below: program created by S.E. Ramos-Onsins and G. Vera (unpublished). downloaded 2017.10.11 from https://bioinformatics.cragenomica.es/numgenomics/people/sebas/software/software.html
                 /data/user/programs/fastaconvtr-master/bin/fastaconvtr -F fasta -f ms -p 1 -i $OUTDIR\POD$i\_all_$j.fasta -o $OUTDIR\POD$i\_all_$j.ms  #ingores Ns (discards site)
 
                 #concatenate  ms files
@@ -82,7 +83,7 @@ do
                 rm $OUTDIR\POD$i\_all_$j.ms
         done #end of j
         
-                #calculate summary statistics
+        #calculate summary statistics using msABC (Pavlidis et al. 2010)
         /data/user/programs/msABC20120315/msABC $(($NIND*2)) $LOCNUM -I 2 $NIND $NIND --obs $OUTDIR\POD$i\_allmarkers.ms --options $INDIR\ms_ssdefs.txt > $OUTDIR\POD$i\_allmarkers.ms.mean
 
         #R script 3: summarize summary statistics across loci
@@ -90,9 +91,9 @@ do
         Rscript --vanilla /data/user/scripts/ABC_summarize_POD.r $OUTDIR $i
 done #end of i
 
-#Rscript 4: put together params and stats for PODs
-####################################################
-Rscript --vanilla /data/user/scripts/ABC_create_PODs_results_table.r $OUTDIR $NPODS $MOD $LOCNUM
+#Rscript 4: put together parameters and stats (first 2 moments calculated over all sequences)
+#############################################################################################
+Rscript --vanilla /data/user/scripts/create_PODs_results_table.r $OUTDIR $NPODS $MOD $LOCNUM
 
 date >> $OUTDIR\runtime_2.txt
 
